@@ -17,8 +17,10 @@ namespace Client {
             }
 
             // request token
-            var tokenClient = new TokenClient (disco.TokenEndpoint, "client", "secret");
-            var tokenResponse = await tokenClient.RequestClientCredentialsAsync ("api1");
+            var tokenClient = new TokenClient (address: disco.TokenEndpoint, clientId: "webclient", clientSecret: "secret");
+            foreach (var scope in disco.ScopesSupported)
+                Console.WriteLine ("Scope supported:" + scope);
+            var tokenResponse = await tokenClient.RequestClientCredentialsAsync (scope: "BloombergWebService");
 
             if (tokenResponse.IsError) {
                 Console.WriteLine (tokenResponse.Error);
@@ -32,13 +34,14 @@ namespace Client {
             var client = new HttpClient ();
             client.SetBearerToken (tokenResponse.AccessToken);
 
-            var response = await client.GetAsync ("http://localhost:5001/identity");
+            var response = await client.GetAsync ("http://localhost:5001/BloombergDLWS");
             if (!response.IsSuccessStatusCode) {
                 Console.WriteLine ("Failed");
                 Console.WriteLine (response.StatusCode);
             } else {
+                Console.WriteLine ("Successful!");
                 var content = await response.Content.ReadAsStringAsync ();
-                Console.WriteLine (JArray.Parse (content));
+                Console.WriteLine ((content));
             }
         }
     }
