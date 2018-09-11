@@ -15,7 +15,7 @@ namespace AuthServer {
         }
 
         public static IWebHostBuilder CreateWebHostBuilder (string[] args) =>
-            WebHost.CreateDefaultBuilder (args).UseUrls ("http://localhost:15000")
+            WebHost.CreateDefaultBuilder (args).UseUrls ("http://localhost:5000")
             .UseStartup<Startup> ();
     }
 }
