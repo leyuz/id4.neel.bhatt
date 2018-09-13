@@ -16,7 +16,6 @@ namespace api {
         public Startup (IConfiguration configuration) {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -29,7 +28,7 @@ namespace api {
             services.AddAuthentication ("Bearer").AddIdentityServerAuthentication (options => {
                 options.Authority = "http://localhost:5000";
                 options.RequireHttpsMetadata = false;
-                options.ApiName = "BloombergWebService";
+                options.ApiName = "Bloomberg";
             });
         }
 

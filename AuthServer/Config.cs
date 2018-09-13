@@ -6,27 +6,42 @@ namespace AuthServer {
     public class Config {
         // clients that are allowed to access resources from the Auth server 
         public static IEnumerable<Client> GetClients () {
+            var clientList = new List<Client> ();
             // client credentials, list of clients
-            var webclient = new Client {
-                ClientId = "webclient",
+            var superclient = new Client {
+                ClientId = "superclient",
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
                 ClientSecrets = {
-                new Secret ("secret".Sha256 ())
+                new Secret (value: "secret".Sha256 (), expiration : null)
                 },
-                AllowedScopes = { "BloombergWebService", "BloombergSFTP" },
+                AllowedScopes = { "Bloomberg", "BloombergWebServiceScheduled" },
+            };
+
+            var normalclient = new Client {
+                ClientId = "normalclient",
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                ClientSecrets = {
+                new Secret (value: "secret".Sha256 (), expiration : null)
+                },
+
+                AllowedScopes = { "BloombergWebServiceScheduled" },
 
             };
-            webclient.Claims = new Claim { };
-            var clientList = new List<Client> ();
-            clientList.Add (webclient);
+            clientList.Add (superclient);
+            clientList.Add (normalclient);
+
             return clientList;
         }
         // API that are allowed to access the Auth server
         public static IEnumerable<ApiResource> GetApiResources () {
             return new List<ApiResource> {
                 new ApiResource ("BloombergSFTP", "My API"),
-                new ApiResource ("BloombergWebService", "My API")
+                new ApiResource ("BloombergWebServiceScheduled", "My API"),
+                new ApiResource ("Bloomberg", "My API"),
+                new ApiResource ("Admin", "My API"),
+                new ApiResource ("test", "My API"),
             };
+
         }
     }
 }

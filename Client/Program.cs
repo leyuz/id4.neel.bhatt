@@ -15,21 +15,31 @@ namespace Client {
                 Console.WriteLine (disco.Error);
                 return;
             }
-
-            // request token
-            var tokenClient = new TokenClient (address: disco.TokenEndpoint, clientId: "webclient", clientSecret: "secret");
+            Console.WriteLine ("Scopes supported below");
             foreach (var scope in disco.ScopesSupported)
-                Console.WriteLine ("Scope supported:" + scope);
-            var tokenResponse = await tokenClient.RequestClientCredentialsAsync (scope: "BloombergWebService");
+                Console.WriteLine ("\t" + scope);
 
+            Console.WriteLine ("Claims supported below");
+            foreach (var claim in disco.ClaimsSupported) {
+                Console.WriteLine ("\t" + claim);
+            }
+            // request token
+
+            var result = await makeRequestAsync (
+                address: disco.TokenEndpoint,
+                clientId: "superclient",
+                clientSecret: "secret",
+                scope: "Bloomberg");
+        }
+        static async Task<bool> makeRequestAsync (string address, string clientId, string clientSecret, string scope) {
+            var tokenClient = new TokenClient (address: address, clientId: clientId, clientSecret: clientSecret);
+            var tokenResponse = await tokenClient.RequestClientCredentialsAsync (scope: scope);
             if (tokenResponse.IsError) {
                 Console.WriteLine (tokenResponse.Error);
-                return;
+                return false;
             }
-
             Console.WriteLine (tokenResponse.Json);
             Console.WriteLine ("\n\n");
-
             // call api
             var client = new HttpClient ();
             client.SetBearerToken (tokenResponse.AccessToken);
@@ -43,6 +53,7 @@ namespace Client {
                 var content = await response.Content.ReadAsStringAsync ();
                 Console.WriteLine ((content));
             }
+            return true;
         }
     }
 }
